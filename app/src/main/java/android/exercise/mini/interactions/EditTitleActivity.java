@@ -82,9 +82,12 @@ public class EditTitleActivity extends AppCompatActivity {
         });
     }
 
+
+    /***
+     * BACK button was clicked
+     */
     @Override
     public void onBackPressed() {
-        // BACK button was clicked
     /*
     TODO:
     if user is now editing, tap on BACK will revert the edit. do the following:
@@ -103,7 +106,11 @@ public class EditTitleActivity extends AppCompatActivity {
         }
     }
 
-    private void stopEditing(boolean saveChanges){
+    /***
+     * switch to the static textView, close keyboard and animate the FABs.
+     * @param saveChanges true iff need to save changes made to the editText.
+     */
+    private void stopEditing(boolean saveChanges) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         FloatingActionButton fabStartEdit = findViewById(R.id.fab_start_edit);
         FloatingActionButton fabEditDone = findViewById(R.id.fab_edit_done);
@@ -111,10 +118,9 @@ public class EditTitleActivity extends AppCompatActivity {
         EditText editTextTitle = findViewById(R.id.editTextPageTitle);
 
         isEditing = false;
-        if  (saveChanges){
+        if (saveChanges) {
             textViewTitle.setText(editTextTitle.getText());
-        }
-        else{
+        } else {
             editTextTitle.setText(textViewTitle.getText());
         }
 
