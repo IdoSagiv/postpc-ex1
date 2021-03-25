@@ -78,19 +78,7 @@ public class EditTitleActivity extends AppCompatActivity {
 
           to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
            */
-            isEditing = false;
-            //  ToDo: animate
-            fabEditDone.setVisibility(View.GONE);
-            fabStartEdit.setVisibility(View.VISIBLE);
-
-            // make sure keyboard is closed
-            editTextTitle.requestFocus();
-            imm.hideSoftInputFromWindow(textViewTitle.getWindowToken(), 0);
-
-            textViewTitle.setText(editTextTitle.getText());
-            editTextTitle.setVisibility(View.GONE);
-            textViewTitle.setVisibility(View.VISIBLE);
-
+            stopEditing(true);
         });
     }
 
@@ -108,20 +96,37 @@ public class EditTitleActivity extends AppCompatActivity {
     else, the user isn't editing. continue normal BACK tap behavior to exit the screen.
     call `super.onBackPressed()`
      */
+        if (isEditing) {
+            stopEditing(false);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void stopEditing(boolean saveChanges){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         FloatingActionButton fabStartEdit = findViewById(R.id.fab_start_edit);
         FloatingActionButton fabEditDone = findViewById(R.id.fab_edit_done);
         TextView textViewTitle = findViewById(R.id.textViewPageTitle);
         EditText editTextTitle = findViewById(R.id.editTextPageTitle);
-        if (isEditing) {
-            isEditing = false;
-            editTextTitle.setText(textViewTitle.getText());
-            editTextTitle.setVisibility(View.GONE);
-            textViewTitle.setVisibility(View.VISIBLE);
-            //  ToDo: animate
-            fabEditDone.setVisibility(View.GONE);
-            fabStartEdit.setVisibility(View.VISIBLE);
-        } else {
-            super.onBackPressed();
+
+        isEditing = false;
+        if  (saveChanges){
+            textViewTitle.setText(editTextTitle.getText());
         }
+        else{
+            editTextTitle.setText(textViewTitle.getText());
+        }
+
+        //  ToDo: animate
+        fabEditDone.setVisibility(View.GONE);
+        fabStartEdit.setVisibility(View.VISIBLE);
+
+        // make sure keyboard is closed
+        editTextTitle.requestFocus();
+        imm.hideSoftInputFromWindow(textViewTitle.getWindowToken(), 0);
+
+        editTextTitle.setVisibility(View.GONE);
+        textViewTitle.setVisibility(View.VISIBLE);
     }
 }
