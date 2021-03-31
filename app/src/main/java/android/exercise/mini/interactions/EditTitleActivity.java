@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,6 +15,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class EditTitleActivity extends AppCompatActivity {
     private boolean isEditing = false;
@@ -32,6 +38,9 @@ public class EditTitleActivity extends AppCompatActivity {
         // setup - start from static title with "edit" button
         fabStartEdit.setVisibility(View.VISIBLE);
         fabEditDone.setVisibility(View.GONE);
+        fabStartEdit.setAlpha(1f);
+        fabEditDone.setAlpha(0f);
+
         textViewTitle.setText("Page title here");
         textViewTitle.setVisibility(View.VISIBLE);
         editTextTitle.setText("Page title here");
@@ -53,8 +62,9 @@ public class EditTitleActivity extends AppCompatActivity {
            */
             isEditing = true;
             //  ToDo: animate
-            fabStartEdit.setVisibility(View.GONE);
-            fabEditDone.setVisibility(View.VISIBLE);
+
+            animateOut(fabStartEdit);
+            animateIn(fabEditDone);
 
             editTextTitle.setText(textViewTitle.getText());
             textViewTitle.setVisibility(View.GONE);
@@ -124,9 +134,8 @@ public class EditTitleActivity extends AppCompatActivity {
             editTextTitle.setText(textViewTitle.getText());
         }
 
-        //  ToDo: animate
-        fabEditDone.setVisibility(View.GONE);
-        fabStartEdit.setVisibility(View.VISIBLE);
+        animateIn(fabStartEdit);
+        animateOut(fabEditDone);
 
         // make sure keyboard is closed
         editTextTitle.requestFocus();
@@ -135,4 +144,35 @@ public class EditTitleActivity extends AppCompatActivity {
         editTextTitle.setVisibility(View.GONE);
         textViewTitle.setVisibility(View.VISIBLE);
     }
+
+    private void animateOut(View view) {
+        float slideRightLength = getResources().getDimension(R.dimen.EditFabSlideRight);
+
+        view.animate()
+                .withStartAction(() -> view.setClickable(false))
+                .alpha(0f)
+                .translationXBy(slideRightLength)
+                .setDuration(1000L)
+                .withEndAction(() -> {
+                    view.setVisibility(View.GONE);
+                    view.setTranslationX(view.getTranslationX() - slideRightLength);
+                    view.setClickable(true);
+                })
+                .start();
+    }
+
+    private void animateIn(View view) {
+        view.animate()
+                .withStartAction(() -> {
+                    view.setClickable(false);
+                    view.setVisibility(View.VISIBLE);
+                })
+                .alpha(1f)
+                .setDuration(1000L)
+                .withEndAction(() -> {
+                    view.setClickable(true);
+                })
+                .start();
+    }
+
 }
